@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="theme-color" content="#000000">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Old Phone AI">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/png" href="icon.png">
+  <title>Old Phone AI</title>
+  <style>
+    * {
+      margin: 0; padding: 0;
+      -webkit-box-sizing: border-box;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+      color: #fff;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 14px;
+    }
+
+    /* ── APP SHELL ── */
+    #app {
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-orient: vertical; -webkit-box-direction: normal;
+      -webkit-flex-direction: column; flex-direction: column;
+      height: 100%; max-width: 680px; margin: 0 auto;
+    }
+
+    /* ── HEADER ── */
+    #header {
+      background: #000;
+      border-bottom: 2px solid #00ff88;
+      padding: 0;
+      -webkit-flex-shrink: 0; flex-shrink: 0;
+    }
+
+    #header-inner {
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+      -webkit-box-pack: justify; -webkit-justify-content: space-between; justify-content: space-between;
+      padding: 12px 16px;
+    }
+
+    #brand {
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+    }
+
+    #brand-icon {
+      width: 42px; height: 42px;
+      background: #000;
+      border: 2px solid #00ff88;
+      border-radius: 10px;
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+      -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+      font-size: 20px;
+      margin-left: 12px;
+      position: relative;
+    }
+
+    #brand-icon-glow {
+      position: absolute;
+      top: -3px; left: -3px; right: -3px; bottom: -3px;
+      border-radius: 12px;
+      border: 1px solid #00ff4422;
+    }
+
+    #brand-texts {}
+    #brand-name {
+      color: #00ff88;
+      font-size: 17px;
+      font-weight: bold;
+      letter-spacing: 3px;
+    }
+    #brand-by {
+      color: #2a2a2a;
+      font-size: 10px;
+      letter-spacing: 2px;
+      margin-top: 1px;
+    }
+    #brand-by span { color: #00aa55; }
+
+    #header-right {
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-orient: vertical; -webkit-box-direction: normal;
+      -webkit-flex-direction: column; flex-direction: column;
+      -webkit-box-align: flex-end; -webkit-align-items: flex-end; align-items: flex-end;
+    }
+
+    #online-badge {
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+      background: #001a0f;
+      border: 1px solid #00ff8844;
+      border-radius: 20px;
+      padding: 3px 10px;
+      font-size: 10px;
+      color: #00ff88;
+      letter-spacing: 1px;
+    }
+
+    #online-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #00ff88;
+      margin-left: 6px;
+      -webkit-animation: pulse 2s infinite; animation: pulse 2s infinite;
+    }
+
+    @-webkit-keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.3; }
+    }
+    @keyframes pulse {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.3; }
+    }
+
+    #model-tag {
+      color: #1a1a1a;
+      font-size: 9px;
+      letter-spacing: 1px;
+      margin-top: 4px;
+    }
+
+    /* ── STATUS BAR ── */
+    #statusbar {
+      background: #030303;
+      border-bottom: 1px solid #0d0d0d;
+      padding: 5px 16px;
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+      font-size: 10px; color: #222; letter-spacing: 1px;
+    }
+    #statusbar-dot { width: 4px; height: 4px; border-radius: 50%; background: #00ff8833; margin-left: 8px; }
+
+    /* ── CHAT AREA ── */
+    #chat {
+      -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;
+      overflow-y: auto; overflow-x: hidden;
+      padding: 16px 14px;
+      -webkit-overflow-scrolling: touch;
+      background: #000;
+    }
+
+    /* ── WELCOME ── */
+    #welcome {
+      text-align: center;
+      padding: 30px 16px 10px;
+    }
+
+    #welcome-logo {
+      width: 72px; height: 72px;
+      border: 2px solid #00ff88;
+      border-radius: 18px;
+      margin: 0 auto 20px;
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+      -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+      font-size: 36px;
+      background: #000;
+      position: relative;
+    }
+
+    #welcome-logo-ring {
+      position: absolute;
+      top: -6px; left: -6px; right: -6px; bottom: -6px;
+      border: 1px solid #00ff8822;
+      border-radius: 22px;
+    }
+
+    #welcome-title {
+      color: #00ff88;
+      font-size: 22px;
+      font-weight: bold;
+      letter-spacing: 4px;
+      margin-bottom: 6px;
+    }
+
+    #welcome-sub {
+      color: #1e1e1e;
+      font-size: 11px;
+      letter-spacing: 3px;
+      margin-bottom: 10px;
+    }
+
+    #welcome-line {
+      width: 60px; height: 1px;
+      background: #00ff8833;
+      margin: 14px auto;
+    }
+
+    #welcome-desc {
+      color: #2a2a2a;
+      font-size: 12px;
+      line-height: 1.8;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+    }
+    #welcome-desc b { color: #00aa55; font-weight: normal; }
+
+    /* ── HINT CHIPS ── */
+    #hints { margin-bottom: 8px; }
+
+    .hint {
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+      background: #080808;
+      border: 1px solid #161616;
+      border-radius: 6px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      -webkit-transition: border-color 0.15s; transition: border-color 0.15s;
+    }
+    .hint:active { border-color: #00ff88; background: #001a0f; }
+
+    .hint-arrow {
+      color: #1a1a1a;
+      font-size: 14px;
+      margin-right: 10px;
+      -webkit-flex-shrink: 0; flex-shrink: 0;
+    }
+
+    .hint-text {
+      color: #333;
+      font-size: 12px;
+      text-align: right;
+      -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;
+    }
+
+    /* ── MESSAGES ── */
+    .msg {
+      margin-bottom: 16px;
+      max-width: 86%;
+      word-wrap: break-word;
+      word-break: break-word;
+    }
+    .msg-user { margin-right: auto; margin-left: 14%; }
+    .msg-ai   { margin-left: auto;  margin-right: 14%; }
+
+    .msg-meta {
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+      margin-bottom: 5px;
+    }
+    .msg-user .msg-meta { -webkit-box-pack: end; -webkit-justify-content: flex-end; justify-content: flex-end; }
+    .msg-ai   .msg-meta { -webkit-box-pack: start; -webkit-justify-content: flex-start; justify-content: flex-start; }
+
+    .msg-avatar {
+      width: 18px; height: 18px;
+      border-radius: 4px;
+      font-size: 11px;
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+      -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+    }
+    .msg-user .msg-avatar { background: #001a0f; border: 1px solid #00ff8866; color: #00ff88; margin-right: 6px; -webkit-box-ordinal-group: 2; -webkit-order: 1; order: 1; }
+    .msg-ai   .msg-avatar { background: #0f0f0f; border: 1px solid #1a1a1a;   color: #444;     margin-left: 6px; }
+
+    .msg-name { font-size: 10px; letter-spacing: 1px; }
+    .msg-user .msg-name { color: #00aa55; }
+    .msg-ai   .msg-name { color: #333; }
+
+    .msg-bubble {
+      padding: 11px 14px;
+      line-height: 1.6;
+      font-size: 13px;
+      position: relative;
+    }
+
+    .msg-user .msg-bubble {
+      background: #001208;
+      border: 1px solid #00ff8844;
+      border-right: 3px solid #00ff88;
+      border-radius: 8px 2px 8px 8px;
+      color: #ccffdd;
+    }
+
+    .msg-ai .msg-bubble {
+      background: #080808;
+      border: 1px solid #141414;
+      border-left: 3px solid #1a1a1a;
+      border-radius: 2px 8px 8px 8px;
+      color: #cccccc;
+    }
+
+    .msg-error .msg-bubble {
+      background: #0a0000;
+      border: 1px solid #330000;
+      border-left: 3px solid #ff3333;
+      color: #ff5555;
+    }
+
+    /* ── TYPING ── */
+    #typing {
+      display: none;
+      margin-bottom: 16px;
+      margin-left: auto;
+      margin-right: 14%;
+      max-width: 86%;
+    }
+
+    #typing-inner {
+      display: -webkit-inline-box; display: -webkit-inline-flex; display: inline-flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+      background: #080808;
+      border: 1px solid #141414;
+      border-left: 3px solid #1a1a1a;
+      border-radius: 2px 8px 8px 8px;
+      padding: 12px 16px;
+    }
+
+    .dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #00ff88;
+      margin: 0 3px;
+      -webkit-animation: blink 1.4s infinite; animation: blink 1.4s infinite;
+    }
+    .dot:nth-child(1) { -webkit-animation-delay:0s;    animation-delay:0s; }
+    .dot:nth-child(2) { -webkit-animation-delay:.2s;   animation-delay:.2s; }
+    .dot:nth-child(3) { -webkit-animation-delay:.4s;   animation-delay:.4s; }
+
+    @-webkit-keyframes blink {
+      0%,60%,100% { opacity: 0.15; -webkit-transform: scale(0.8); transform: scale(0.8); }
+      30%          { opacity: 1;    -webkit-transform: scale(1);   transform: scale(1); }
+    }
+    @keyframes blink {
+      0%,60%,100% { opacity: 0.15; transform: scale(0.8); }
+      30%          { opacity: 1;    transform: scale(1); }
+    }
+
+    /* ── INPUT BAR ── */
+    #inputbar {
+      background: #000;
+      border-top: 1px solid #0d0d0d;
+      padding: 10px 12px 12px;
+      -webkit-flex-shrink: 0; flex-shrink: 0;
+    }
+
+    #inputrow {
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: flex-end; -webkit-align-items: flex-end; align-items: flex-end;
+      background: #080808;
+      border: 1px solid #1a1a1a;
+      border-radius: 8px;
+      padding: 4px 4px 4px 8px;
+      -webkit-transition: border-color 0.2s; transition: border-color 0.2s;
+    }
+
+    #inputrow.focused { border-color: #00ff8844; }
+
+    #userinput {
+      -webkit-box-flex: 1; -webkit-flex: 1; flex: 1;
+      background: transparent;
+      border: none;
+      color: #eee;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 13px;
+      padding: 8px 6px;
+      resize: none;
+      outline: none;
+      min-height: 38px;
+      max-height: 110px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      line-height: 1.5;
+    }
+    #userinput::-webkit-input-placeholder { color: #222; }
+
+    #sendbtn {
+      width: 40px; height: 40px;
+      background: #00ff88;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      -webkit-flex-shrink: 0; flex-shrink: 0;
+      font-size: 16px;
+      color: #000;
+      font-weight: bold;
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+      -webkit-box-pack: center; -webkit-justify-content: center; justify-content: center;
+      letter-spacing: 0;
+    }
+    #sendbtn:active { background: #00cc66; }
+    #sendbtn.disabled { background: #111; color: #222; }
+
+    #toolbar {
+      display: -webkit-box; display: -webkit-flex; display: flex;
+      -webkit-box-align: center; -webkit-align-items: center; align-items: center;
+      -webkit-box-pack: justify; -webkit-justify-content: space-between; justify-content: space-between;
+      padding: 8px 2px 0;
+    }
+
+    #char-hint { color: #151515; font-size: 10px; letter-spacing: 1px; }
+
+    #clearbtn {
+      background: none; border: 1px solid #111;
+      border-radius: 4px;
+      color: #1a1a1a;
+      font-family: "Courier New", Courier, monospace;
+      font-size: 10px; cursor: pointer;
+      letter-spacing: 1px; padding: 3px 10px;
+    }
+    #clearbtn:active { border-color: #ff3333; color: #ff3333; }
+
+    /* ── SCROLLBAR ── */
+    #chat::-webkit-scrollbar       { width: 2px; }
+    #chat::-webkit-scrollbar-track { background: #000; }
+    #chat::-webkit-scrollbar-thumb { background: #0d0d0d; border-radius: 2px; }
+
+    /* ── DIVIDER ── */
+    .day-divider {
+      text-align: center;
+      margin: 8px 0 16px;
+      position: relative;
+    }
+    .day-divider span {
+      background: #000;
+      color: #111;
+      font-size: 10px;
+      letter-spacing: 2px;
+      padding: 0 12px;
+      position: relative;
+    }
+    .day-divider:before {
+      content: "";
+      position: absolute;
+      top: 50%; left: 0; right: 0;
+      height: 1px;
+      background: #0a0a0a;
+    }
+  </style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div id="header">
+    <div id="header-inner">
+      <div id="brand">
+        <div id="brand-icon">
+          &#128241;
+          <div id="brand-icon-glow"></div>
+        </div>
+        <div id="brand-texts">
+          <div id="brand-name">OLD PHONE</div>
+          <div id="brand-by">by <span>Zeyad</span> &middot; AI</div>
+        </div>
+      </div>
+      <div id="header-right">
+        <div id="online-badge">
+          <div id="online-dot"></div>
+          ONLINE
+        </div>
+        <div id="model-tag">GEMINI 2.0 FLASH</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div id="statusbar">
+    <div id="statusbar-dot"></div>
+    AMOLED &nbsp;&bull;&nbsp; KITKAT READY &nbsp;&bull;&nbsp; LIGHTWEIGHT
+  </div>
+
+  <!-- CHAT -->
+  <div id="chat">
+    <div id="welcome">
+      <div id="welcome-logo">
+        &#128241;
+        <div id="welcome-logo-ring"></div>
+      </div>
+      <div id="welcome-title">OLD PHONE AI</div>
+      <div id="welcome-sub">POWERED BY GEMINI</div>
+      <div id="welcome-line"></div>
+      <div id="welcome-desc">
+        ذكاء اصطناعي متطور يعمل على أضعف الأجهزة<br>
+        طوّره <b>Zeyad</b> خصيصاً لك
+      </div>
+      <div id="hints">
+        <div class="hint" onclick="setHint('اشرح لي كيف يعمل الذكاء الاصطناعي بشكل مبسط')">
+          <span class="hint-arrow">&#9658;</span>
+          <span class="hint-text">اشرح لي كيف يعمل الذكاء الاصطناعي</span>
+        </div>
+        <div class="hint" onclick="setHint('ساعدني في كتابة كود Python بسيط')">
+          <span class="hint-arrow">&#9658;</span>
+          <span class="hint-text">ساعدني في كتابة كود Python بسيط</span>
+        </div>
+        <div class="hint" onclick="setHint('ما أفضل النصائح لتوفير شحن البطارية على الهاتف؟')">
+          <span class="hint-arrow">&#9658;</span>
+          <span class="hint-text">ما أفضل النصائح لتوفير شحن البطارية؟</span>
+        </div>
+        <div class="hint" onclick="setHint('اكتب لي قصيدة قصيرة عن التقنية')">
+          <span class="hint-arrow">&#9658;</span>
+          <span class="hint-text">اكتب لي قصيدة قصيرة عن التقنية</span>
+        </div>
+      </div>
+    </div>
+
+    <div id="typing">
+      <div id="typing-inner">
+        <span class="dot"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div id="inputbar">
+    <div id="inputrow" id="inputrow">
+      <textarea
+        id="userinput"
+        placeholder="اكتب رسالتك هنا..."
+        rows="1"
+        onkeyup="autoGrow(this)"
+        onfocus="rowFocus(true)"
+        onblur="rowFocus(false)"
+      ></textarea>
+      <button id="sendbtn" onclick="sendMsg()">&#9658;</button>
+    </div>
+    <div id="toolbar">
+      <div id="char-hint">GEMINI &middot; ZEYAD</div>
+      <button id="clearbtn" onclick="clearChat()">&#10006; مسح</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var KEY   = "AIzaSyCGRxAkBch7tM2Il1gdu1GH_2cvsYANXqY";
+var MODEL = "gemini-2.5-flash";
+var SYS   = "You are Old Phone AI, a very smart AI assistant created by Zeyad. You are designed to work perfectly on old and weak devices like Android 4.4 KitKat. You are highly intelligent and give accurate, helpful, concise answers. Respond in Arabic when the user writes in Arabic, and in English when they write in English. Never say you are Gemini or Google - you are Old Phone AI only.";
+
+var msgs  = [];
+var busy  = false;
+var shown = true;
+
+function rowFocus(v) {
+  var r = document.getElementById("inputrow");
+  if (r) { r.className = v ? "focused" : ""; }
+}
+
+function autoGrow(el) {
+  el.style.height = "auto";
+  el.style.height = (el.scrollHeight > 110 ? 110 : el.scrollHeight) + "px";
+}
+
+function scrollBot() {
+  var c = document.getElementById("chat");
+  c.scrollTop = c.scrollHeight;
+}
+
+function hideWelcome() {
+  if (shown) {
+    var w = document.getElementById("welcome");
+    if (w) { w.style.display = "none"; }
+    shown = false;
+  }
+}
+
+function showTyping(v) {
+  document.getElementById("typing").style.display = v ? "block" : "none";
+  if (v) { scrollBot(); }
+}
+
+function setBusy(v) {
+  busy = v;
+  var b = document.getElementById("sendbtn");
+  b.className = v ? "disabled" : "";
+  b.innerHTML = v ? "&#8987;" : "&#9658;";
+}
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+function addBubble(role, text, isErr) {
+  hideWelcome();
+  var chat   = document.getElementById("chat");
+  var typing = document.getElementById("typing");
+
+  var d = document.createElement("div");
+  d.className = "msg " + (role === "user" ? "msg-user" : "msg-ai") + (isErr ? " msg-error" : "");
+
+  var meta = document.createElement("div");
+  meta.className = "msg-meta";
+
+  var av = document.createElement("div");
+  av.className = "msg-avatar";
+  av.innerHTML = role === "user" ? "U" : "AI";
+
+  var nm = document.createElement("div");
+  nm.className = "msg-name";
+  nm.innerHTML = role === "user" ? "أنت" : "OLD PHONE AI";
+
+  if (role === "user") {
+    meta.appendChild(nm);
+    meta.appendChild(av);
+  } else {
+    meta.appendChild(av);
+    meta.appendChild(nm);
+  }
+
+  var bub = document.createElement("div");
+  bub.className = "msg-bubble";
+  bub.innerHTML = esc(text).replace(/\n/g, "<br>");
+
+  d.appendChild(meta);
+  d.appendChild(bub);
+  chat.insertBefore(d, typing);
+  scrollBot();
+}
+
+function setHint(t) {
+  document.getElementById("userinput").value = t;
+  autoGrow(document.getElementById("userinput"));
+  sendMsg();
+}
+
+function buildContents() {
+  var out = [];
+  for (var i = 0; i < msgs.length; i++) {
+    out.push({
+      role: msgs[i].role === "assistant" ? "model" : "user",
+      parts: [{ text: msgs[i].content }]
+    });
+  }
+  return out;
+}
+
+function sendMsg() {
+  if (busy) { return; }
+  var ta   = document.getElementById("userinput");
+  var text = ta.value.replace(/^\s+|\s+$/g, "");
+  if (!text) { return; }
+
+  ta.value = "";
+  ta.style.height = "auto";
+
+  addBubble("user", text, false);
+  msgs.push({ role: "user", content: text });
+  if (msgs.length > 20) { msgs = msgs.slice(msgs.length - 20); }
+
+  setBusy(true);
+  showTyping(true);
+
+  var endpoint =
+    "https://generativelanguage.googleapis.com/v1beta/models/" +
+    MODEL + ":generateContent?key=" + KEY;
+
+  var payload = JSON.stringify({
+    system_instruction: { parts: [{ text: SYS }] },
+    contents: buildContents(),
+    generationConfig: { maxOutputTokens: 1000 }
+  });
+
+  var xhr = new XMLHttpRequest();
+  xhr.open("POST", endpoint, true);
+  xhr.setRequestHeader("Content-Type", "application/json");
+  xhr.timeout = 40000;
+
+  xhr.onreadystatechange = function() {
+    if (xhr.readyState !== 4) { return; }
+    showTyping(false);
+    setBusy(false);
+
+    if (xhr.status === 200) {
+      try {
+        var data  = JSON.parse(xhr.responseText);
+        var reply = data.candidates[0].content.parts[0].text;
+        msgs.push({ role: "assistant", content: reply });
+        addBubble("ai", reply, false);
+      } catch (e) {
+        addBubble("ai", "parse error: " + e.message + "\n" + xhr.responseText.substring(0, 200), true);
+      }
+    } else {
+      var err = "HTTP " + xhr.status;
+      try {
+        var j = JSON.parse(xhr.responseText);
+        if (j.error && j.error.message) { err += ": " + j.error.message; }
+        else { err += "\n" + xhr.responseText.substring(0, 200); }
+      } catch (e2) {
+        err += "\n" + xhr.responseText.substring(0, 200);
+      }
+      addBubble("ai", err, true);
+    }
+  };
+
+  xhr.ontimeout = function() {
+    showTyping(false); setBusy(false);
+    addBubble("ai", "انتهت المهلة (40s). حاول مجدداً.", true);
+  };
+
+  xhr.onerror = function() {
+    showTyping(false); setBusy(false);
+    addBubble("ai", "خطأ في الشبكة - تحقق من الإنترنت.", true);
+  };
+
+  xhr.send(payload);
+}
+
+function clearChat() {
+  msgs = []; shown = false;
+  var chat   = document.getElementById("chat");
+  var typing = document.getElementById("typing");
+  while (chat.firstChild && chat.firstChild !== typing) {
+    chat.removeChild(chat.firstChild);
+  }
+  var w = document.createElement("div");
+  w.id = "welcome";
+  w.innerHTML =
+    '<div id="welcome-logo">&#128241;<div id="welcome-logo-ring"></div></div>' +
+    '<div id="welcome-title">OLD PHONE AI</div>' +
+    '<div id="welcome-sub">POWERED BY GEMINI</div>' +
+    '<div id="welcome-line"></div>' +
+    '<div id="welcome-desc">ذكاء اصطناعي متطور يعمل على أضعف الأجهزة<br>طوّره <b>Zeyad</b> خصيصاً لك</div>' +
+    '<div id="hints">' +
+    '<div class="hint" onclick="setHint(\'اشرح لي كيف يعمل الذكاء الاصطناعي بشكل مبسط\')"><span class="hint-arrow">&#9658;</span><span class="hint-text">اشرح لي كيف يعمل الذكاء الاصطناعي</span></div>' +
+    '<div class="hint" onclick="setHint(\'ساعدني في كتابة كود Python بسيط\')"><span class="hint-arrow">&#9658;</span><span class="hint-text">ساعدني في كتابة كود Python بسيط</span></div>' +
+    '<div class="hint" onclick="setHint(\'ما أفضل النصائح لتوفير شحن البطارية على الهاتف؟\')"><span class="hint-arrow">&#9658;</span><span class="hint-text">ما أفضل النصائح لتوفير شحن البطارية؟</span></div>' +
+    '<div class="hint" onclick="setHint(\'اكتب لي قصيدة قصيرة عن التقنية\')"><span class="hint-arrow">&#9658;</span><span class="hint-text">اكتب لي قصيدة قصيرة عن التقنية</span></div>' +
+    '</div>';
+  chat.insertBefore(w, typing);
+  shown = true;
+}
+</script>
+</body>
+</html>
